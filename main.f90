@@ -138,5 +138,3 @@ program Simpson
 end program Simpson
 
 
-
-puta mierda
