@@ -1,0 +1,1 @@
+Recordar que se le bajó la precision a las integrales, lo mejor es tenerlo en     h = 0.01 
