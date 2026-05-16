@@ -56,17 +56,17 @@ program Simpson
     a_limite = 0.0         ! Límite inferior (simetría)
     
     ! Rangos (ajústalos para tiempos razonables)
-    A_inicio = 2.0
+    A_inicio = -2.0
     A_fin = 3.0
     paso_A = 0.1           ! Aumentado para acelerar
     n_A = nint((A_fin - A_inicio) / paso_A) + 1
 
-    B_inicio = 2.0
+    B_inicio = -2.0
     B_fin = 3.0
     paso_B = 0.1           ! Aumentado
     n_B = nint((B_fin - B_inicio) / paso_B) + 1
 
-    C_inicio = 2.0
+    C_inicio = -2.0
     C_fin = 3.0
     paso_C = 0.1           ! Aumentado
     n_C = nint((C_fin - C_inicio) / paso_C) + 1
