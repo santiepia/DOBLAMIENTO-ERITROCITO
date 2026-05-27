@@ -1,5 +1,11 @@
 Recordar que se le bajó la precision a las integrales, lo mejor es tenerlo en     h = 0.01 
 
+Orden con el que se deben correr los archivos:
+
+1. main.f90
+2. filtro.py
+3. generar_energias.py
+4. grafica.py
 
 Tenemos experiemntalmente los valores de eritrocitos de area y volumen:
 
@@ -40,6 +46,9 @@ D es la rigidez de doblamiento, en este caso, es la misma para todas las figuras
  -2π viene de integrar en el ángulo azimutal (rotación)
 
  -Otro 2 viene de integrar de -x_max a x_max (simetría par)
+
+
+ En el archivo fortran, no es necesario iterar para valores de A y C negativos, debido a que en la ecuacion tomada todos los valores A y B tienen potencia par, así que si se toma negativo pues dará lo mismo, por otro lado, para el parametro B tampoco tomamoss negativos debido a que B solo es la amplitud de la ecuacion 
 
 
 
