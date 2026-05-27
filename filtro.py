@@ -1,9 +1,9 @@
 # filtrar_simple.py - Sin pandas, solo Python estándar
 
-VOLUMEN_MIN = 80.0
-VOLUMEN_MAX = 128.0
-AREA_MIN = 110.0
-AREA_MAX = 168.0
+VOLUMEN_MIN = 102.0
+VOLUMEN_MAX = 113.0
+AREA_MIN = 132.0
+AREA_MAX = 142.0
 
 contador_total = 0
 contador_filtrado = 0

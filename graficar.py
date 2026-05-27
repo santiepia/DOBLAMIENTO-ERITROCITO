@@ -24,67 +24,91 @@ def Y_cassini(x, A, B, C):
 # ============================================================================
 # 1.5 FUNCIÓN PARA CALCULAR LA ENERGÍA DE DOBLAMIENTO
 # ============================================================================
-def bending_energy(A, B, C, N=10000):
+def bending_energy(A, B, C, N=500):
     """
-    Calcula la energía de curvatura para una GUV
-    E = 2π ∫ (1/R₁ + 1/R₂)² · Y · √(1 + Y'²) dx
+    Calcula la energía usando malla no uniforme:
+    - Más puntos cerca del borde (donde la derivada es grande)
+    - Menos puntos en el centro (donde la función es suave)
     """
     x_max = np.sqrt(A**2 + C**2)
     if x_max <= 1e-10:
         return 0.0
     
-    x = np.linspace(0, x_max, N+1)
-    dx = 0.0001
+    # Malla no uniforme: concentrar puntos cerca de x_max
+    # Usamos transformación: x = x_max * (t)^p
+    # p > 1 concentra puntos cerca de x_max
+    # p < 1 concentra puntos cerca de 0
     
+    if B < 0.6:  # Formas con borde afilado (flying saucer)
+        p = 2.5  # Concentración extra cerca del borde
+    else:
+        p = 1.0  # Malla uniforme
     
-    y = np.zeros(N+1)
+    t = np.linspace(0, 1, N+1)
+    x = x_max * (t ** p)
+    
+    # dx no es constante, necesitamos los diferenciales para Simpson
+    # Para malla no uniforme, usamos Simpson compuesto en cada subintervalo
+    
+    # Calcular y(x)
+    y = np.array([Y_cassini(xi, A, B, C) for xi in x])
+    
+    # Derivada numérica (diferencias centrales en malla no uniforme)
     yp = np.zeros(N+1)
-    
-    # Calcular Y(x) para cada punto
-    for i, xi in enumerate(x):
-        y[i] = Y_cassini(xi, A, B, C)
-    
-    # Derivada numérica (diferencias centrales)
     for i in range(1, N):
         if y[i] > 0:
-            yp[i] = (Y_cassini(x[i]+dx, A, B, C) - Y_cassini(x[i]-dx, A, B, C)) / (2*dx)
+            # Fórmula para malla no uniforme
+            dx_left = x[i] - x[i-1]
+            dx_right = x[i+1] - x[i]
+            yp[i] = ( (dx_left**2) * (y[i+1] - y[i]) + 
+                      (dx_right**2) * (y[i] - y[i-1]) ) / (dx_left * dx_right * (dx_left + dx_right))
     
-    yp[0] = (y[1] - y[0]) / dx
-    yp[N] = (y[N] - y[N-1]) / dx
+    yp[0] = (y[1] - y[0]) / (x[1] - x[0])
+    yp[N] = (y[N] - y[N-1]) / (x[N] - x[N-1])
     
-    integrando = np.zeros(N+1)
-    
-    for i in range(1, N):
-        if y[i] <= 1e-100:
+    # Integración con malla no uniforme (regla del trapecio generalizada para simplicidad)
+    E = 0.0
+    for i in range(N):
+        if y[i] <= 1e-10 or y[i+1] <= 1e-10:
             continue
         
-        # Segunda derivada (para R1)
-        ypp = (yp[i+1] - yp[i-1]) / (2*dx)
+        # Aproximación del integrando en cada subintervalo (promedio)
+        # Cálculo de radios en ambos extremos (simplificado)
         
-        # Radio R1 (curvatura en el plano del meridiano)
-        if abs(ypp) > 1e-10:
-            R1 = (1 + yp[i]**2)**1.5 / abs(ypp)
+        # Para no complicar, usamos valores en el punto medio
+        x_mid = (x[i] + x[i+1]) / 2
+        y_mid = Y_cassini(x_mid, A, B, C)
+        
+        if y_mid <= 1e-10:
+            continue
+        
+        # Derivada en el punto medio
+        dx_mid = (x[i+1] - x[i]) / 2
+        yp_mid = (Y_cassini(x_mid + dx_mid, A, B, C) - Y_cassini(x_mid - dx_mid, A, B, C)) / (2*dx_mid)
+        
+        # Segunda derivada (aproximada)
+        ypp_mid = (Y_cassini(x_mid + dx_mid, A, B, C) - 2*y_mid + Y_cassini(x_mid - dx_mid, A, B, C)) / (dx_mid**2)
+        
+        # Radios
+        if abs(ypp_mid) > 1e-10:
+            R1 = (1 + yp_mid**2)**1.5 / abs(ypp_mid)
         else:
             R1 = 1e10
         
-        # Radio R2 (curvatura perpendicular)
-        if abs(yp[i]) > 1e-10:
-            R2 = y[i] * np.sqrt(1 + yp[i]**2) / abs(yp[i])
+        if abs(yp_mid) > 1e-10:
+            R2 = y_mid * np.sqrt(1 + yp_mid**2) / abs(yp_mid)
         else:
-            R2 = y[i]
+            R2 = y_mid
         
-        # Curvatura media y término del integrando
         curv_media = 1.0/R1 + 1.0/R2
-        integrando[i] = (curv_media**2) * y[i] * np.sqrt(1 + yp[i]**2)
+        integrando_mid = (curv_media**2) * y_mid * np.sqrt(1 + yp_mid**2)
+        
+        # Contribución del subintervalo (regla del trapecio adaptada)
+        E += integrando_mid * (x[i+1] - x[i])
     
-    # Integración por Simpson
-    suma_impares = sum(integrando[1:N:2])
-    suma_pares = sum(integrando[2:N-1:2])
-    
-    E = 2.0 * np.pi * (dx/3.0) * (integrando[0] + integrando[N] + 4*suma_impares + 2*suma_pares)
+    E = 2.0 * np.pi * E
     
     return E
-
 
 # ============================================================================
 # 2. CREAR DIRECTORIO PARA GUARDAR LAS GRÁFICAS

@@ -57,18 +57,18 @@ program Simpson
     
     ! Rangos (ajústalos para tiempos razonables)
     A_inicio = 0.0
-    A_fin =10.0
-    paso_A = 0.1         ! Aumentado para acelerar
+    A_fin =6.0
+    paso_A = 0.05        ! Aumentado para acelerar
     n_A = nint((A_fin - A_inicio) / paso_A) + 1
 
     B_inicio = 0.3
     B_fin = 1.0
-    paso_B = 0.1           ! Aumentado
+    paso_B = 0.05           ! Aumentado
     n_B = nint((B_fin - B_inicio) / paso_B) + 1
 
     C_inicio = 0.0
-    C_fin = 10.0
-    paso_C = 0.1           ! Aumentado
+    C_fin = 7.5
+    paso_C = 0.05           ! Aumentado
     n_C = nint((C_fin - C_inicio) / paso_C) + 1
 
     open(10, file='resultados.txt', status='replace')
