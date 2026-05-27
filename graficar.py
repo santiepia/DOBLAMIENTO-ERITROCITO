@@ -34,7 +34,8 @@ def bending_energy(A, B, C, N=10000):
         return 0.0
     
     x = np.linspace(0, x_max, N+1)
-    dx = x[1] - x[0]
+    dx = 0.0001
+    
     
     y = np.zeros(N+1)
     yp = np.zeros(N+1)
@@ -160,7 +161,7 @@ plt.xlabel('Parámetro B (altura/escala vertical)', fontsize=14)
 plt.ylabel('Energía de doblamiento (E)', fontsize=14)
 plt.title('Energía de curvatura vs. Parámetro B\n(formas que cumplen condiciones fisiológicas)', fontsize=14)
 plt.grid(True, alpha=0.3)
-plt.ylim(0, 55)
+
 # Guardar gráfica
 plt.savefig('graficas_filtradas/energia_vs_B.png', dpi=150, bbox_inches='tight')
 plt.savefig('graficas_filtradas/energia_vs_B.pdf', bbox_inches='tight')
