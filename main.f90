@@ -57,7 +57,7 @@ program Simpson
     
     ! Rangos (ajústalos para tiempos razonables)
     A_inicio = 0.0
-    A_fin =10.0
+    A_fin = 10.0
     paso_A = 0.1         ! Aumentado para acelerar
     n_A = nint((A_fin - A_inicio) / paso_A) + 1
 
@@ -90,7 +90,7 @@ program Simpson
                 ! --- Calcular b_limite y N dependiendo de A y C ---
                 b_limite = sqrt(A_valor**2 + C_valor**2)
                 N = (b_limite - a_limite) / h
-                if (mod(N,2) /= 0) N = N - 1
+                if (mod(N,2) /= 0) N = N - 1 !Hacer que N sea par para poder hacer la Regla de Simpson
                 b_limite = a_limite + N * h
                 if (N <= 0) cycle   ! Evita errores
                 

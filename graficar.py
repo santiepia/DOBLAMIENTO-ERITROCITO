@@ -36,7 +36,7 @@ def bending_energy(A, B, C, N=10000):
     x = np.linspace(0, x_max, N+1)
     dx = 0.0001
     
-    
+ 
     y = np.zeros(N+1)
     yp = np.zeros(N+1)
     
