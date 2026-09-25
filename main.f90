@@ -56,32 +56,32 @@ program Simpson
     a_limite = 0.0         ! Límite inferior (simetría)
     
     ! Rangos (ajústalos para tiempos razonables)
-    A_inicio = -2.0
-    A_fin = 3.0
-    paso_A = 0.1           ! Aumentado para acelerar
+    A_inicio = 0.0
+    A_fin = 10.0
+    paso_A = 0.1         ! Aumentado para acelerar
     n_A = nint((A_fin - A_inicio) / paso_A) + 1
 
-    B_inicio = -2.0
-    B_fin = 3.0
+    B_inicio = 0.3
+    B_fin = 1.0
     paso_B = 0.1           ! Aumentado
     n_B = nint((B_fin - B_inicio) / paso_B) + 1
 
-    C_inicio = -2.0
-    C_fin = 3.0
+    C_inicio = 0.0
+    C_fin = 10.0
     paso_C = 0.1           ! Aumentado
     n_C = nint((C_fin - C_inicio) / paso_C) + 1
 
     open(10, file='resultados.txt', status='replace')
     write(10,*) '   A       B       C     b_limite       Volumen           Area Superficial'
     write(10,*) '================================================================================'
-
+    ! Bucle sobre B
+    do i_B = 0, n_B - 1
+        B_valor = B_inicio + i_B * paso_B
     ! Bucle sobre A
-    do i_A = 0, n_A - 1
-        A_valor = A_inicio + i_A * paso_A
+        do i_A = 0, n_A - 1
+            A_valor = A_inicio + i_A * paso_A
+            
         
-        ! Bucle sobre B
-        do i_B = 0, n_B - 1
-            B_valor = B_inicio + i_B * paso_B
             
             ! Bucle sobre C (dentro de C se genera x porque b_limite depende de C)
             do i_C = 0, n_C - 1
@@ -90,7 +90,7 @@ program Simpson
                 ! --- Calcular b_limite y N dependiendo de A y C ---
                 b_limite = sqrt(A_valor**2 + C_valor**2)
                 N = (b_limite - a_limite) / h
-                if (mod(N,2) /= 0) N = N - 1
+                if (mod(N,2) /= 0) N = N - 1 !Hacer que N sea par para poder hacer la Regla de Simpson
                 b_limite = a_limite + N * h
                 if (N <= 0) cycle   ! Evita errores
                 
